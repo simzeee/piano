@@ -1,23 +1,47 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import * as Tone from "tone";
 
 function App() {
+  const notes = [
+    "C",
+    "C#",
+    "D",
+    "Eb",
+    "E",
+    "F",
+    "F#",
+    "G",
+    "G#",
+    "A",
+    "Bb",
+    "B",
+  ];
+
+  const makeOctave = (num, addExtraC = false) => {
+    const notesToUse = addExtraC ? notes.concat("C") : notes;
+    return notesToUse.map((note, index) => {
+      let isAccidental = note.length > 1;
+      let noteValue = `${note}${index === 12 ? num + 1 : num}`;
+      return (
+        <div
+          className={isAccidental ? "pianoKey blackKey" : "pianoKey whiteKey"}
+          key={noteValue}
+          onClick={async () => {
+            await Tone.start();
+            const synth = new Tone.Synth().toDestination();
+            console.log(synth);
+            synth.triggerAttackRelease(noteValue, "8n");
+          }}
+        ></div>
+      );
+    });
+  };
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {makeOctave(4)}
+      {makeOctave(5)}
+      {makeOctave(6, true)}
     </div>
   );
 }
